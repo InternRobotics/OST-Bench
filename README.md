@@ -1,7 +1,7 @@
 <div align="center">
 
 # OST-Bench:  Evaluating the Capabilities of MLLMs in Online Spatio-temporal Scene Understanding
-[**🌐 Homepage**](https://rbler1234.github.io/OSTBench.github.io/)  | [**📑 Paper**](https://arxiv.org/pdf/2507.07984) | [**🤗 dataset**](https://huggingface.co/datasets/rbler/OST-Bench_v1) | [**📖 arXiv**](https://arxiv.org/abs/2507.07984)
+[**🌐 Homepage**](https://rbler1234.github.io/OSTBench.github.io/)  | [**📑 Paper**](https://arxiv.org/pdf/2507.07984) | [**🤗 dataset**](https://huggingface.co/datasets/rbler/OST-Bench) | [**📖 arXiv**](https://arxiv.org/abs/2507.07984)
 </div>
 
 ![demo](assets/teaser_new.png "demo")
@@ -17,6 +17,8 @@
 5. [Leaderboard](#🏆-leaderboard)
 
 ## 🔔 News
+🔥[2025-09]: Our paper has been accepted at NeurIPS 2025 — see you in Santiago! 🎉 At the same time, we’re excited to release the [training split](https://huggingface.co/datasets/rbler/OST-Bench) of OST-Bench on Hugging Face.
+
 🔥[2025-07]: OST-Bench has been supported in the VLMEvalKit repository.
 
 🔥[2025-07]: We released our paper, benchmark, and evaluation codes.
@@ -139,7 +141,7 @@ python run.py --model GPT4o --data OST
 |           GPT-4o           | 48.72   | 38.83   | 72.76  | 33.52      | 59.83  | 48.57    | 59.80  | 23.98  |
 |           GPT-4.1          | 53.40   | 47.23   | 76.46  | 37.65      | 66.44  | 51.67    | 60.60  | 29.10  |
 | Open-Source                |         |         |        |            |        |          |        |        |
-|       InternVL-2.5-8B      | 38.98   | 41.88   | 52.78  | 29.18      | 52.34  | 22.50    | 55.40  | 29.30  |
+|       InternVL-2.5-8B      | 44.63   | 41.87   | 58.60  | 34.61      | 52.38  | 42.68    | 56.37  | 29.28  |
 |      InternVL-2.5-38B      | 50.78   | 45.38   | 73.88  | 33.95      | 61.39  | 45.93    | 61.10  | 31.50  |
 |      InternVL-2.5-78B      | 51.08   | 46.45   | 74.02  | 32.93      | 61.51  | 47.07    | 65.90  | 28.95  |
 |        QwenVL-2.5-7B       | 41.16   | 40.43   | 52.56  | 31.53      | 50.13  | 36.60    | 62.10  | 22.73  |

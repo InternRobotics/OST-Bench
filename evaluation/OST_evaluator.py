@@ -8,8 +8,7 @@ import argparse
 
 num_mapping = {'zero':0,'one':1,'two':2,'three':3,'four':4,'five':5,'six':6,'seven':7,'eight':8,'nine':9,'ten':10}
 skip_type = ['None']
-
-
+ 
 
 def Judgement_evalution(pred,gt,options):
     """Evaluates model performance on judgement questions using longest common subsequence matching.
@@ -87,7 +86,7 @@ def Enumeration_evalution(pred,gt):
                 if word in pred.lower():
                     pred = num_mapping[word]
                     break
-        pred = int(pred)
+        pred = int(float(pred))
         gt = int(gt)
     except:
         return 0.0
@@ -209,23 +208,28 @@ def collect_results(static_results):
     full_dict['Agent_object_spatial-direction(Judgement)'] = sum([static_results[f'Agent_object_spatial-direction(Judgement{i})'] for i in range(1,4)])/3.0
     full_dict['Agent_object_spatial-distance(Judgement)'] = sum([static_results[f'Agent_object_spatial-distance(Judgement{i})'] for i in range(1,4)])/3.0
     full_dict['Agent_visible_info-existence(Temporal-loc)'] = (static_results['Agent_visible_info-existence(Temporal-loc1)'] + static_results['Agent_visible_info-existence(Temporal-loc2)'] )/2.0
-    for type_name in static_results:
-        if 'Agent_object_spatial-direction(Judgement' in type_name or 'Agent_object_spatial-distance(Judgement' in type_name or 'Agent_visible_info-existence(Temporal-loc' in type_name:
+    for type_name in sorted(list(static_results.keys())):
+        if '1)' in type_name or '2)' in type_name or '3)' in type_name:
             continue
         full_dict[type_name] = static_results[type_name]
     
     overall_dict = {}
     overall_dict['A_state(Judge)'] = (full_dict['Agent_state-orientation(Judgement)']+full_dict['Agent_state-position(Judgement)'])/2.0
     overall_dict['A_state(Esti)'] = (full_dict['Agent_state-orientation(Estimation)']+full_dict['Agent_state-position(Estimation)'])/2.0
-    
+    overall_dict['A_state'] = (full_dict['Agent_state-orientation(Estimation)']+full_dict['Agent_state-position(Estimation)']+full_dict['Agent_state-orientation(Judgement)']+full_dict['Agent_state-position(Judgement)'])/4.0
     overall_dict['A_info(Judge)'] = (full_dict['Agent_visible_info-existence(Judgement)']+full_dict['Agent_visible_info-order(Judgement)']+\
                                     full_dict['Agent_visible_info-diversity(Judgement)'])/3.0
     overall_dict['A_info(Temp)'] = full_dict['Agent_visible_info-existence(Temporal-loc)']
     overall_dict['A_info(Count)'] = full_dict['Agent_visible_info-quantity(Counting)']
+    overall_dict['A_info'] = (full_dict['Agent_visible_info-existence(Judgement)']+full_dict['Agent_visible_info-order(Judgement)']+\
+                                    full_dict['Agent_visible_info-diversity(Judgement)']+full_dict['Agent_visible_info-existence(Temporal-loc)']+\
+                                     full_dict['Agent_visible_info-quantity(Counting)']   )/5.0
     
     overall_dict['AO(Judge)'] = (full_dict['Agent_object_spatial-direction(Judgement)']+full_dict['Agent_object_spatial-distance(Judgement)'])/2.0
     overall_dict['AO(Esti)'] = (full_dict['Agent_object_spatial-direction(Estimation)']+full_dict['Agent_object_spatial-distance(Estimation)'])/2.0
     overall_dict['AO(Temp)'] = (full_dict['Agent_object_spatial-direction(Temporal-loc)']+full_dict['Agent_object_spatial-distance(Temporal-loc)'])/2.0
+    
+    overall_dict['AO'] = (overall_dict['AO(Judge)']+overall_dict['AO(Esti)']+overall_dict['AO(Temp)'])/3.0
     
     overall_dict['Judgement'] = (full_dict['Agent_object_spatial-direction(Judgement)']+full_dict['Agent_object_spatial-distance(Judgement)']+\
                                  full_dict['Agent_visible_info-existence(Judgement)']+full_dict['Agent_visible_info-order(Judgement)']+\
@@ -270,10 +274,10 @@ if __name__=='__main__':
     for idx,sample in tqdm(enumerate(samples)):
 
         sample['response'] = str(sample['response'])
+
         
         if len(sample['response'])>0:
             sample['pred'] =  process_answer(sample['response'])
-        
         
         sample = st_eval.evaluation(sample)
         type = sample['type']
@@ -285,12 +289,19 @@ if __name__=='__main__':
         total_cnt[type]+=1
         correct_cnt[type]+=sample['metric']
         sum_+=1
+
     static_results = {k:correct_cnt[k]/total_cnt[k] for k in total_cnt.keys() }
+  
+
     full_dict,overall_dict = collect_results(static_results)
     
     print('-------------------------- Evaluation Result--------------------------')
     print('Total Samples:',sum_)
     print('Overall Accuracy:',overall_dict['Overall'])
+    print('-----------------------------------------------------------------------')
+    print('Agent State Accuracy:',overall_dict['A_state'])
+    print('Agent Visible Info Accuracy:',overall_dict['A_info'])
+    print('Agent Object Spatial Accuracy:',overall_dict['AO'])
     print('-----------------------------------------------------------------------')
     print('Judgement Accuracy:',overall_dict['Judgement'])
     print('Estimation Accuracy:',overall_dict['Estimation'])
